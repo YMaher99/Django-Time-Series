@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from configuration_manager import ConfigurationManager
+from configurers.configuration_manager import ConfigurationManager
 import os
 
 
@@ -19,7 +19,7 @@ class DataProducer(ABC):
         self._metadata = value
 
     @abstractmethod
-    def produce_data(self, time_series, date_range, anomaly_mask, config_manager: ConfigurationManager, filename=None):
+    def produce_data(self, time_series_df, config_manager: ConfigurationManager, filename=None):
         """
             Abstract method to produce the time series data
         Args:
