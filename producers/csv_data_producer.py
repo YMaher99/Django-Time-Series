@@ -12,7 +12,7 @@ class CSVDataProducer(DataProducer):
             config_manager (ConfigurationManager): the configuration manager containing the configs that generated the time series.
             filename (str): the name of the .csv file to be created.
 
-        """ 
+        """
         time_series_df.to_csv(f"./sample_datasets/{filename}.csv",
                               encoding='utf-8', index=False)
         self._metadata.append({'id': str(filename)})

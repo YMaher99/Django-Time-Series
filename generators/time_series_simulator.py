@@ -2,7 +2,7 @@ import random
 import pandas as pd
 import numpy as np
 from datetime import timedelta
-from configuration_manager import ConfigurationManager
+from configurers.configuration_manager import ConfigurationManager
 from sklearn.preprocessing import MinMaxScaler
 from abstract_time_series_generator import AbstractTimeSeriesGenerator
 
@@ -182,4 +182,7 @@ class TimeSeriesGenerator(AbstractTimeSeriesGenerator):
         self.__time_series = self.__add_noise()
         self.__time_series, self.__anomaly_mask = self.__add_outliers()
         self.__time_series = self.__add_missing_values()
-        return self.__time_series, self.__date_range, self.__anomaly_mask
+        return pd.DataFrame({'value': self.__time_series,
+                             'timestamp': self.__date_range,
+                             'anomaly': self.__anomaly_mask})
+
