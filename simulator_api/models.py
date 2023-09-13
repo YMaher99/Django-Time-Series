@@ -4,6 +4,10 @@ from django.db import models
 # Create your models here.
 
 class Simulator(models.Model):
+    """
+        Model for storing data about simulators
+    """
+
     ADDITIVE = "additive"
     MULTIPLICATIVE = "multiplicative"
     time_series_choices = ((ADDITIVE, "Additive"), (MULTIPLICATIVE, "Multiplicative"))
@@ -21,9 +25,10 @@ class Simulator(models.Model):
     process_id = models.IntegerField()
 
 
-
-
 class Dataset(models.Model):
+    """
+        Model for storing data about datasets
+    """
     SUBMITTED = "submitted"
     RUNNING = "running"
     SUCCEEDED = "succeeded"
@@ -45,6 +50,9 @@ class Dataset(models.Model):
 
 
 class Seasonality(models.Model):
+    """
+        Model for storing data about datasets
+    """
     DAILY = "Daily"
     WEEKLY = "Weekly"
     MONTHLY = "Monthly"

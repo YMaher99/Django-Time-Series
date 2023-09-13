@@ -39,11 +39,17 @@ class DjangoConfigurationManager(ConfigurationManager):
         return self._cycle_frequency
 
     def load_config(self):
+        """
+            Loads common configurations of the simulator to the config manager
+        """
         self._start_date = self.__simulator.start_date
         self._end_date = self.__simulator.end_date
         self._data_type = self.__simulator.type
 
     def configure(self):
+        """
+            Configures the config manager to the next dataset's configurations (if present)
+        """
         if self.__current_dataset_num < len(self.__datasets):
             self._frequency = self.__datasets[self.__current_dataset_num].frequency
             self._noise_level = self.__datasets[self.__current_dataset_num].noise_level

@@ -19,7 +19,12 @@ class SimulatorViewSet(viewsets.ModelViewSet):
 
     simulator_runner = {}
 
-    def create(self, request, *args, **kwargs):
+    def create(self, request, *args, **kwargs) -> Response:
+        """
+            request: the request including the data of the simulator to be created
+        Returns:
+            Response: a response to the request
+        """
         simulator_data = request.data
         datasets_data = simulator_data.pop('datasets')
         seasonalities_data = datasets_data[0].pop('seasonality_components')
@@ -51,6 +56,12 @@ class SimulatorViewSet(viewsets.ModelViewSet):
             return Response(simulator_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, *args, **kwargs):
+
+        """
+            request: the request including the data of the simulator to be updated
+        Returns:
+            Response: a response to the request
+        """
         instance = self.get_object()
         simulator_data = request.data
 
@@ -65,7 +76,15 @@ class SimulatorViewSet(viewsets.ModelViewSet):
             return Response(simulator_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, methods=['GET'])
-    def run_simulator(self, request, pk=None):
+    def run_simulator(self, request, pk=None) -> Response:
+        """
+        Runs a simulator
+        Args:
+            request: ignored
+            pk: primary key of the simulator to be run
+        Returns:
+            Response: a response to the request
+        """
         instance = self.get_object()
         config_manager = DjangoConfigurationManager(instance)
         generator = CoefficientsGenerator(config_manager)
@@ -82,6 +101,15 @@ class SimulatorViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['GET'])
     def stop_simulator(self, request, pk=None):
+
+        """
+            stops a running simulator
+        Args:
+            request: ignored
+            pk: primary key of the simulator to be run
+        Returns:
+            Response: a response to the request
+        """
         SimulatorViewSet.simulator_runner[pk].stop_simulator()
 
         return Response({'message': "Simulator has stopped running"}, status=status.HTTP_200_OK)

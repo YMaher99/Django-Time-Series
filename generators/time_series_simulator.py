@@ -157,16 +157,14 @@ class TimeSeriesGenerator(AbstractTimeSeriesGenerator):
 
         return data_with_missing
 
-    def generate_time_series(self) -> (pd.Series, pd.DatetimeIndex, np.ndarray):
+    def generate_time_series(self) -> pd.DataFrame:
         """
             Generates a time series.
 
         Returns:
 
         (
-            pd.Series: the generated time series.
-            pd.DatetimeIndex: the timestamps of each data point in the time series.
-            np.ndarray: indicates whether each data point is an anomaly or not.
+            pd.Series: the generated time series as a dataframe
         )
         """
         self.__generate_data_range()

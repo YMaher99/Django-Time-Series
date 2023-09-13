@@ -16,7 +16,16 @@ class CoefficientsGenerator(AbstractTimeSeriesGenerator):
         self.__anomaly_mask = None
         self.__config_manager = config_manager
 
-    def generate_time_series(self):
+    def generate_time_series(self) -> pd.DataFrame:
+        """
+            Generates a time series based on the configurations found in the config manager.
+
+        Returns:
+
+        (
+            pd.Series: the generated time series as a dataframe
+        )
+        """
         self.__generate_data_range()
         self.__generate_polynomial()
         self.__add_seasonality()
@@ -33,7 +42,7 @@ class CoefficientsGenerator(AbstractTimeSeriesGenerator):
 
     def __generate_data_range(self) -> None:
         """
-            generate the DatetimeIndex to be used in the time series generation
+            generate the DatetimeIndex to be used in the time series generation.
         """
         date_rng = pd.date_range(start=self.__config_manager.start_date,
                                  end=self.__config_manager.end_date,
@@ -42,10 +51,16 @@ class CoefficientsGenerator(AbstractTimeSeriesGenerator):
         self.__date_range = date_rng.copy(deep=True)
 
     def __generate_polynomial(self):
+        """
+            Generates the time series based on the polynomial coefficients in the config manager.
+        """
         self.__time_series = pd.Series(np.polyval(self.__config_manager.trend_coefficients,
                                                   np.arange(len(self.__date_range))))
 
     def __add_seasonality(self):
+        """
+            adds (daily,weekly,monthly) seasonality to the time series as found in the config manager.
+        """
         for seasonality in self.__config_manager.seasonalities:
             if seasonality.frequency == seasonality.DAILY:
                 frequency = 2 * np.pi / len(self.__date_range)
@@ -65,6 +80,9 @@ class CoefficientsGenerator(AbstractTimeSeriesGenerator):
                 self.__time_series *= pd.Series(seasonality_component)
 
     def __add_cycles(self):
+        """
+            adds the cyclic component specified in the config manager.
+        """
         cycle_component = 1 if self.__config_manager.data_type == 'multiplicative' else 0
         cycle_component += (self.__config_manager.cycle_amplitude *
                             np.sin(2 * np.pi * self.__config_manager.cycle_frequency *
@@ -75,6 +93,9 @@ class CoefficientsGenerator(AbstractTimeSeriesGenerator):
             self.__time_series *= pd.Series(cycle_component)
 
     def __add_noise(self):
+        """
+            Adds noise to the existing time series as specified in the config manager.
+        """
         noise_level = self.__config_manager.noise_level/100.0
         noise = np.zeros_like(self.__time_series)
         for i in range(len(self.__time_series)):
@@ -82,6 +103,13 @@ class CoefficientsGenerator(AbstractTimeSeriesGenerator):
         self.__time_series = pd.Series((self.__time_series + noise)[:, 0])
 
     def __add_outliers(self):
+        """
+            Adds outliers to the time series
+        Returns:
+            (
+            pd.Series: the time series with added outliers.
+            np.ndarray: a mask indicating whether each point is an outlier or not.)
+        """
         num_outliers = int(len(self.__time_series) * (self.__config_manager.percentage_outliers/100))
         outlier_indices = np.random.choice(len(self.__time_series), num_outliers, replace=False)
         data_with_outliers = self.__time_series.copy()
@@ -94,6 +122,9 @@ class CoefficientsGenerator(AbstractTimeSeriesGenerator):
         return data_with_outliers, anomaly_mask
 
     def __add_missing_values(self):
+        """
+            Removes some data points to simulate missing values
+        """
         num_missing = int(len(self.__time_series) * self.__config_manager.missing_percentage)
         missing_indices = np.random.choice(len(self.__time_series), size=num_missing, replace=False)
 

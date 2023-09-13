@@ -1,5 +1,4 @@
 import threading
-
 from generators.abstract_time_series_generator import AbstractTimeSeriesGenerator
 from producers.data_producer import DataProducer
 from configurers.django_configuration_manager import DjangoConfigurationManager
@@ -15,7 +14,10 @@ class ParallelRunSimulator:
         self.producer = producer
         self._stop_event = threading.Event()
 
-    def worker_method(self):
+    def worker_method_run_sim(self):
+        """
+        runs a simulator generating its datasets
+        """
         while (self.config_manager.current_dataset_num < len(self.config_manager.datasets)-1 and
                not self._stop_event.is_set()):
             self.config_manager.configure()
@@ -32,9 +34,15 @@ class ParallelRunSimulator:
         self.producer.generate_metadata_file()
 
     def run_simulator(self):
-        thread = threading.Thread(target=self.worker_method())
+        """
+            runs worker_method_run_sim in a separate thread
+        """
+        thread = threading.Thread(target=self.worker_method_run_sim())
         thread.start()
         thread.join()
 
     def stop_simulator(self):
+        """
+            stops a running simulator
+        """
         self._stop_event.set()
