@@ -7,8 +7,12 @@ class DjangoConfigurationManager(ConfigurationManager):
     def __init__(self, simulator: models.Simulator):
         super().__init__()
         self.__simulator = simulator
-        self.__current_dataset_num = 0
+        self.__current_dataset_num = -1
         self.__datasets = list(simulator.datasets.all())
+
+    @property
+    def datasets(self):
+        return self.__datasets
 
     @property
     def seasonalities(self):
@@ -49,7 +53,6 @@ class DjangoConfigurationManager(ConfigurationManager):
             self._cycle_amplitude = self.__datasets[self.__current_dataset_num].cycle_amplitude
             self._cycle_frequency = self.__datasets[self.__current_dataset_num].cycle_frequency
             self._seasonalities = list(self.__datasets[self.__current_dataset_num].seasonality_components.all())
-            print(self._seasonalities)
             self.__current_dataset_num += 1
 
     @property

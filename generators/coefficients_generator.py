@@ -3,7 +3,7 @@ from datetime import timedelta
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 
-from abstract_time_series_generator import AbstractTimeSeriesGenerator
+from generators.abstract_time_series_generator import AbstractTimeSeriesGenerator
 from configurers.django_configuration_manager import DjangoConfigurationManager
 import pandas as pd
 
@@ -43,7 +43,7 @@ class CoefficientsGenerator(AbstractTimeSeriesGenerator):
 
     def __generate_polynomial(self):
         self.__time_series = pd.Series(np.polyval(self.__config_manager.trend_coefficients,
-                                                  np.arange(self.__date_range)))
+                                                  np.arange(len(self.__date_range))))
 
     def __add_seasonality(self):
         for seasonality in self.__config_manager.seasonalities:
@@ -82,7 +82,7 @@ class CoefficientsGenerator(AbstractTimeSeriesGenerator):
         self.__time_series = pd.Series((self.__time_series + noise)[:, 0])
 
     def __add_outliers(self):
-        num_outliers = int(len(self.__time_series) * self.__config_manager.percentage_outliers)
+        num_outliers = int(len(self.__time_series) * (self.__config_manager.percentage_outliers/100))
         outlier_indices = np.random.choice(len(self.__time_series), num_outliers, replace=False)
         data_with_outliers = self.__time_series.copy()
         outliers = np.random.uniform(-1, 1, num_outliers)

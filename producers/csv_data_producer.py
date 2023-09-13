@@ -1,10 +1,10 @@
-from data_producer import DataProducer
+from producers.data_producer import DataProducer
 import pandas as pd
 from configurers.configuration_manager import ConfigurationManager
 
 
 class CSVDataProducer(DataProducer):
-    def produce_data(self, time_series_df, config_manager: ConfigurationManager, filename: str = None) -> None:
+    def produce_data(self, time_series_df, config_manager: ConfigurationManager, filename: str = None):
         """
             Generates a .csv file containing the time series data
         Args:
@@ -18,6 +18,8 @@ class CSVDataProducer(DataProducer):
         self._metadata.append({'id': str(filename)})
         for attr_name, attr_value in config_manager.__dict__.items():
             self._metadata[-1][attr_name] = attr_value
+
+        return True
 
     def generate_metadata_file(self):
         """

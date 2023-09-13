@@ -4,18 +4,18 @@ from datetime import datetime
 
 class ConfigurationManager(ABC):
 
-    def __init__(self):
-        self._start_date = datetime(2021, 7, 1)
-        self._end_date = datetime(2023, 7, 11)
-        self._frequency = '1D'
-        self._daily_seasonality = "no"
-        self._weekly_seasonality = "no"
-        self._noise_level = "small"
-        self._trend_level = "no"
-        self._cyclic_period = "no"
-        self._data_type = "additive"
-        self._percentage_outliers = 0.05
-        self._datasets_num = 1
+    # def __init__(self):
+    #     self._start_date = datetime(2021, 7, 1)
+    #     self._end_date = datetime(2023, 7, 11)
+    #     self._frequency = '1D'
+    #     self._daily_seasonality = "no"
+    #     self._weekly_seasonality = "no"
+    #     self._noise_level = "small"
+    #     self._trend_level = "no"
+    #     self._cyclic_period = "no"
+    #     self._data_type = "additive"
+    #     self._percentage_outliers = 0.05
+    #     self._datasets_num = 1
 
     @property
     def datasets_num(self):

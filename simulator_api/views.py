@@ -1,12 +1,13 @@
 from django.shortcuts import render
 from rest_framework.decorators import action
 from rest_framework.response import Response
-
 from .serializers import SimulatorSerializer, DatasetSerializer, SeasonalitySerializer
-from rest_framework.generics import ListAPIView
 from rest_framework import viewsets, status
 from .models import *
 from configurers.django_configuration_manager import DjangoConfigurationManager
+from generators.coefficients_generator import CoefficientsGenerator
+from producers.csv_data_producer import CSVDataProducer
+from simulator_operations.parallel_run_simulator import ParallelRunSimulator
 
 
 # Create your views here.
@@ -15,6 +16,8 @@ from configurers.django_configuration_manager import DjangoConfigurationManager
 class SimulatorViewSet(viewsets.ModelViewSet):
     queryset = Simulator.objects.all()
     serializer_class = SimulatorSerializer
+
+    simulator_runner = {}
 
     def create(self, request, *args, **kwargs):
         simulator_data = request.data
@@ -64,11 +67,19 @@ class SimulatorViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['GET'])
     def run_simulator(self, request, pk=None):
         instance = self.get_object()
+        config_manager = DjangoConfigurationManager(instance)
+        generator = CoefficientsGenerator(config_manager)
+        if instance.producer_type == instance.CSV:
+            producer = CSVDataProducer()
+        else:
+            print("NOT YET IMPLEMENTED REVERTING TO CSV")
+            producer = CSVDataProducer()
 
-        # TODO: add code to run the simulator here
+        SimulatorViewSet.simulator_runner[pk] = ParallelRunSimulator(config_manager, generator, producer)
+        SimulatorViewSet.simulator_runner[pk].run_simulator()
 
-        config_manager = DjangoConfigurationManager(simulator=instance)
-        config_manager.load_config()
-        config_manager.configure()
-        # TODO: handle response from the simulator
-        return Response({'message': "", 'result': ""}, status=status.HTTP_200_OK)
+        return Response({'message': "Simulator has started running"}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['GET'])
+    def stop_simulator(self, request, pk=None):
+        SimulatorViewSet.simulator_runner[pk].stop_simulator()

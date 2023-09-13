@@ -35,7 +35,7 @@ class Dataset(models.Model):
 
     simulator = models.ForeignKey(Simulator, on_delete=models.CASCADE, related_name='datasets')
     frequency = models.CharField(max_length=100)
-    noise_level = models.CharField(max_length=100)
+    noise_level = models.FloatField()
     trend_coefficients = models.JSONField()
     missing_percentage = models.FloatField()
     outlier_percentage = models.FloatField()
