@@ -1,4 +1,5 @@
 import threading
+
 from generators.abstract_time_series_generator import AbstractTimeSeriesGenerator
 from producers.data_producer import DataProducer
 from configurers.django_configuration_manager import DjangoConfigurationManager
@@ -15,7 +16,8 @@ class ParallelRunSimulator:
         self._stop_event = threading.Event()
 
     def worker_method(self):
-        while self.config_manager.current_dataset_num < len(self.config_manager.datasets)-1:
+        while (self.config_manager.current_dataset_num < len(self.config_manager.datasets)-1 and
+               not self._stop_event.is_set()):
             self.config_manager.configure()
             self.config_manager.datasets[self.config_manager.current_dataset_num].status = self.config_manager.datasets[
                 self.config_manager.current_dataset_num].RUNNING
@@ -32,6 +34,7 @@ class ParallelRunSimulator:
     def run_simulator(self):
         thread = threading.Thread(target=self.worker_method())
         thread.start()
+        thread.join()
 
     def stop_simulator(self):
         self._stop_event.set()

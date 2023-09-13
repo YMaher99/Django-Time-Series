@@ -83,3 +83,5 @@ class SimulatorViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['GET'])
     def stop_simulator(self, request, pk=None):
         SimulatorViewSet.simulator_runner[pk].stop_simulator()
+
+        return Response({'message': "Simulator has stopped running"}, status=status.HTTP_200_OK)
