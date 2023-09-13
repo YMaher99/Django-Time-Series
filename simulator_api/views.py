@@ -1,10 +1,12 @@
 from django.shortcuts import render
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from .serializers import SimulatorSerializer, DatasetSerializer, SeasonalitySerializer
 from rest_framework.generics import ListAPIView
 from rest_framework import viewsets, status
 from .models import *
+from configurers.django_configuration_manager import DjangoConfigurationManager
 
 
 # Create your views here.
@@ -44,3 +46,29 @@ class SimulatorViewSet(viewsets.ModelViewSet):
             return Response(simulator_serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(simulator_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def partial_update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        simulator_data = request.data
+
+        # Serialize the author instance with the updated data
+        simulator_serializer = SimulatorSerializer(instance, data=simulator_data, partial=True)
+
+        if simulator_serializer.is_valid():
+            simulator_serializer.save()
+
+            return Response(simulator_serializer.data)
+        else:
+            return Response(simulator_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['GET'])
+    def run_simulator(self, request, pk=None):
+        instance = self.get_object()
+
+        # TODO: add code to run the simulator here
+
+        config_manager = DjangoConfigurationManager(simulator=instance)
+        config_manager.load_config()
+        config_manager.configure()
+        # TODO: handle response from the simulator
+        return Response({'message': "", 'result': ""}, status=status.HTTP_200_OK)
