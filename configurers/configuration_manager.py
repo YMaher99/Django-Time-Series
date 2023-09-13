@@ -6,7 +6,7 @@ class ConfigurationManager(ABC):
 
     def __init__(self):
         self._start_date = datetime(2021, 7, 1)
-        self._duration = 60
+        self._end_date = datetime(2023, 7, 11)
         self._frequency = '1D'
         self._daily_seasonality = "no"
         self._weekly_seasonality = "no"
@@ -19,12 +19,10 @@ class ConfigurationManager(ABC):
 
     @property
     def datasets_num(self):
-
         return self._datasets_num
 
     @property
     def daily_seasonality(self):
-
         return self._daily_seasonality
 
     @property
@@ -45,7 +43,6 @@ class ConfigurationManager(ABC):
 
     @property
     def weekly_seasonality(self):
-
         return self._weekly_seasonality
 
     @property
