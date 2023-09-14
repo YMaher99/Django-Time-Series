@@ -27,7 +27,6 @@ class SimulatorViewSet(viewsets.ModelViewSet):
         """
         simulator_data = request.data
         datasets_data = simulator_data.pop('datasets')
-        seasonalities_data = datasets_data[0].pop('seasonality_components')
 
         simulator_serializer = SimulatorSerializer(data=simulator_data)
         simulator_data['meta_data'] = {}
@@ -41,6 +40,7 @@ class SimulatorViewSet(viewsets.ModelViewSet):
                 dataset_serializer = DatasetSerializer(data=dataset_data)
                 if dataset_serializer.is_valid():
                     dataset_instance = dataset_serializer.save()
+                    seasonalities_data = dataset_data.pop('seasonality_components')
                     for seasonality_data in seasonalities_data:
                         seasonality_data['dataset'] = dataset_instance.id
                         seasonality_serializer = SeasonalitySerializer(data=seasonality_data)
