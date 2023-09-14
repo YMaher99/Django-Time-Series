@@ -1,3 +1,5 @@
+import copy
+
 from django.shortcuts import render
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -25,7 +27,9 @@ class SimulatorViewSet(viewsets.ModelViewSet):
         Returns:
             Response: a response to the request
         """
+
         simulator_data = request.data
+        simulator_data = simulator_data
         datasets_data = simulator_data.pop('datasets')
 
         simulator_serializer = SimulatorSerializer(data=simulator_data)
@@ -39,8 +43,9 @@ class SimulatorViewSet(viewsets.ModelViewSet):
                 dataset_data['status'] = 'submitted'
                 dataset_serializer = DatasetSerializer(data=dataset_data)
                 if dataset_serializer.is_valid():
-                    dataset_instance = dataset_serializer.save()
                     seasonalities_data = dataset_data.pop('seasonality_components')
+                    dataset_instance = dataset_serializer.save()
+
                     for seasonality_data in seasonalities_data:
                         seasonality_data['dataset'] = dataset_instance.id
                         seasonality_serializer = SeasonalitySerializer(data=seasonality_data)
