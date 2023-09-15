@@ -94,11 +94,11 @@ class SimulatorViewSet(viewsets.ModelViewSet):
         if instance.producer_type == instance.CSV:
             producer = CSVDataProducer()
         else:
-            print("NOT YET IMPLEMENTED REVERTING TO CSV")
             producer = CSVDataProducer()
 
-        SimulatorViewSet.simulator_runner[pk] = ParallelRunSimulator(config_manager, generator, producer)
-        SimulatorViewSet.simulator_runner[pk].run_simulator()
+        if instance.simulator_runner is None:
+            instance.simulator_runner = ParallelRunSimulator(config_manager, generator, producer)
+        instance.simulator_runner.run_simulator()
 
         return Response({'message': "Simulator has started running"}, status=status.HTTP_200_OK)
 
@@ -113,6 +113,10 @@ class SimulatorViewSet(viewsets.ModelViewSet):
         Returns:
             Response: a response to the request
         """
-        SimulatorViewSet.simulator_runner[pk].stop_simulator()
-
+        instance = self.get_object()
+        if instance.simulator_runner is not None:
+            instance.simulator_runner.stop_simulator()
+            instance.simulator_runner = None
+        else:
+            return Response({'message': "Simulator was not running"}, status=status.HTTP_200_OK)
         return Response({'message': "Simulator has stopped running"}, status=status.HTTP_200_OK)

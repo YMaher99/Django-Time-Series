@@ -15,11 +15,11 @@ class TestSimulatorAPI(APITestCase):
                                                   meta_data={},
                                                   process_id=0)
 
-    def test_get_simulators_endpoint(self):
+    def test_get_simulators_endpoint_success(self):
         response = self.client.get(path='/simulator/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_post_simulators_endpoint(self):
+    def test_post_simulators_endpoint_success(self):
         data = {
 
             "name": "simulator1",
@@ -85,15 +85,17 @@ class TestSimulatorAPI(APITestCase):
         response = self.client.post(path='/simulator/', data=data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def test_post_simulators_endpoint_invalid_data(self):
+    def test_post_simulators_endpoint_invalid_data_failure(self):
         data = {}
         response = self.client.post(path='/simulator/', data=data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_run_simulator(self):
-        response = self.client.get(path=f'/simulator/{self.simulator.pk}/run_simulator/')
+    def test_run_simulator_success(self):
+        url = reverse('simulator-run-simulator', kwargs={'pk': self.simulator.pk})
+        response = self.client.get(path=url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    # def test_stop_simulator(self):
-    #     response = self.client.get(path='/simulator/8/stop_simulator/')
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    def test_stop_simulator_success(self):
+        url = reverse('simulator-stop-simulator', kwargs={'pk': self.simulator.pk})
+        response = self.client.get(path=url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)

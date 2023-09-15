@@ -1,4 +1,7 @@
 from django.db import models
+import warnings
+
+warnings.simplefilter("ignore", category=Warning)
 
 
 # Create your models here.
@@ -15,6 +18,8 @@ class Simulator(models.Model):
     KAFKA = "kafka"
     CSV = "csv"
     producer_type_choices = ((KAFKA, "Kafka"), (CSV, "CSV"))
+
+    simulator_runner = None
 
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
