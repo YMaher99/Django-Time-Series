@@ -29,14 +29,12 @@ class SimulatorViewSet(viewsets.ModelViewSet):
         """
 
         simulator_data = request.data
-        simulator_data = simulator_data
-        datasets_data = simulator_data.pop('datasets')
-
         simulator_serializer = SimulatorSerializer(data=simulator_data)
         simulator_data['meta_data'] = {}
         simulator_data['producer_type'] = 'csv'
         simulator_data['process_id'] = 0
         if simulator_serializer.is_valid():
+            datasets_data = simulator_data.pop('datasets')
             simulator_instance = simulator_serializer.save()
             for dataset_data in datasets_data:
                 dataset_data['simulator'] = simulator_instance.id
