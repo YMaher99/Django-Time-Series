@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "54320:5432" #Port 5432 was already used by some other process
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  web:
+    build: .
+    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/code
+      - ./sample_datasets:/code/sample_datasets
+      - ./simulator_api/migrations:/code/simulator_api/migrations
+    ports:
+      - "8000:8000"
+    environment:
+      - POSTGRES_NAME=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    depends_on:
+      - db
+volumes:
+  postgres_data:
+
+
+
