@@ -9,6 +9,7 @@ from .models import *
 from configurers.django_configuration_manager import DjangoConfigurationManager
 from generators.coefficients_generator import CoefficientsGenerator
 from producers.csv_data_producer import CSVDataProducer
+from producers.nifi_producer import NIFIProducer
 from simulator_operations.parallel_run_simulator import ParallelRunSimulator
 
 
@@ -92,9 +93,9 @@ class SimulatorViewSet(viewsets.ModelViewSet):
         config_manager = DjangoConfigurationManager(instance)
         generator = CoefficientsGenerator(config_manager)
         if instance.producer_type == instance.CSV:
-            producer = CSVDataProducer()
+            producer = NIFIProducer()  # CSVDataProducer()
         else:
-            producer = CSVDataProducer()
+            producer = NIFIProducer()  # CSVDataProducer()
 
         if instance.simulator_runner is None:
             instance.simulator_runner = ParallelRunSimulator(config_manager, generator, producer)
