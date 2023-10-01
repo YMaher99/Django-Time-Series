@@ -3,16 +3,34 @@ import json
 from configurers.configuration_manager import ConfigurationManager
 from producers.data_producer import DataProducer
 import requests
+import psycopg2
 
 
 class NIFIProducer(DataProducer):
 
-    def __init__(self):
-        super().__init__()
-        self.current_id = 0
-
     def produce_data(self, time_series_df: pd.DataFrame, config_manager: ConfigurationManager, filename=None):
         # df_json = time_series_df.to_json(orient='records')
+
+        dbname = "postgres"
+        user = "postgres"
+        password = "postgres"
+        host = "db"
+        port = "5432"
+
+        # Establish a connection to the database
+        conn = psycopg2.connect(
+            dbname=dbname,
+            user=user,
+            password=password,
+            host=host,
+            port=port
+        )
+
+        cur = conn.cursor()
+        query = "SELECT MAX(id) FROM public.time_series_json;"
+        cur.execute(query)
+        max_value = cur.fetchone()[0]
+
         json_output = {}
 
         time_series_df.dropna(inplace=True)
@@ -26,8 +44,7 @@ class NIFIProducer(DataProducer):
             }
             json_output[str(idx)] = record
         json_result = json.dumps(json_output)
-        json_str = '{"id":' + str(self.current_id) + ',"json":' + json_result + '}'
-        self.current_id += 1
+        json_str = '{"id":' + str(max_value + 1) + ',"json":' + json_result + '}'
 
         url = 'http://nifi:5000/'
         response = requests.post(url, data=json_str)
