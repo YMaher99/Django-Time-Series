@@ -3,6 +3,8 @@ import copy
 from django.shortcuts import render
 from rest_framework.decorators import action
 from rest_framework.response import Response
+
+from producers.kafka_consumer import KafkaConsumer
 from .serializers import SimulatorSerializer, DatasetSerializer, SeasonalitySerializer
 from rest_framework import viewsets, status
 from .models import *
@@ -10,6 +12,7 @@ from configurers.django_configuration_manager import DjangoConfigurationManager
 from generators.coefficients_generator import CoefficientsGenerator
 from producers.csv_data_producer import CSVDataProducer
 from producers.nifi_producer import NIFIProducer
+from producers.kafka_producer import KafkaProducer
 from simulator_operations.parallel_run_simulator import ParallelRunSimulator
 
 
@@ -93,9 +96,9 @@ class SimulatorViewSet(viewsets.ModelViewSet):
         config_manager = DjangoConfigurationManager(instance)
         generator = CoefficientsGenerator(config_manager)
         if instance.producer_type == instance.CSV:
-            producer = NIFIProducer()  # CSVDataProducer()
+            producer = KafkaProducer()  # CSVDataProducer()
         else:
-            producer = NIFIProducer()  # CSVDataProducer()
+            producer = KafkaProducer()  # CSVDataProducer()
 
         if instance.simulator_runner is None:
             instance.simulator_runner = ParallelRunSimulator(config_manager, generator, producer)

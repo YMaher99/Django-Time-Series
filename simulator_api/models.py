@@ -28,6 +28,7 @@ class Simulator(models.Model):
     meta_data = models.JSONField()
     producer_type = models.CharField(choices=producer_type_choices, max_length=200)
     process_id = models.IntegerField()
+    sink_name = models.CharField(max_length=200, null=True)
 
 
 class Dataset(models.Model):
@@ -52,6 +53,8 @@ class Dataset(models.Model):
     cycle_amplitude = models.FloatField()
     cycle_frequency = models.FloatField()
     status = models.CharField(choices=status_choices, max_length=200)
+    generator_id = models.CharField(max_length=200, null=True)
+    attribute_id = models.CharField(max_length=200, null=True)
 
 
 class Seasonality(models.Model):
