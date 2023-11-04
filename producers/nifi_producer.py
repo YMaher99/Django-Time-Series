@@ -8,7 +8,7 @@ import psycopg2
 
 class NIFIProducer(DataProducer):
 
-    def produce_data(self, time_series_df: pd.DataFrame, config_manager: ConfigurationManager, filename=None):
+    def produce_data(self, time_series_df: pd.DataFrame):
         # df_json = time_series_df.to_json(orient='records')
 
         dbname = "postgres"
@@ -52,6 +52,9 @@ class NIFIProducer(DataProducer):
             print("DataFrame sent successfully!")
         else:
             print("Failed to send DataFrame. Status code:", response.status_code)
+
+    def add_metadata(self):
+        pass
 
     def generate_metadata_file(self):
         pass

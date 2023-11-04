@@ -4,9 +4,9 @@ import os
 
 
 class DataProducer(ABC):
-
-    def __init__(self):
+    def __init__(self, config_manager: ConfigurationManager):
         self._metadata = []
+        self.config_manager = config_manager
         if not os.path.exists('sample_datasets'):
             os.mkdir('sample_datasets')
 
@@ -19,7 +19,7 @@ class DataProducer(ABC):
         self._metadata = value
 
     @abstractmethod
-    def produce_data(self, time_series_df, config_manager: ConfigurationManager, filename=None):
+    def produce_data(self, time_series_df):
         """
             Abstract method to produce the time series data
         Args:
@@ -29,9 +29,10 @@ class DataProducer(ABC):
         """
         pass
 
-    # @abstractmethod
-    # def __add_metadata(self):
-    #     pass
+    @abstractmethod
+    def add_metadata(self):
+        pass
+
     @abstractmethod
     def generate_metadata_file(self):
         """

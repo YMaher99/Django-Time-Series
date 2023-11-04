@@ -3,10 +3,10 @@ from generators.abstract_time_series_generator import AbstractTimeSeriesGenerato
 from producers.data_producer import DataProducer
 from configurers.django_configuration_manager import DjangoConfigurationManager
 from producers.kafka_producer import KafkaProducer
-from producers.kafka_consumer import KafkaConsumer
+from consumers.kafka_consumer import KafkaConsumer
+
 
 class ParallelRunSimulator:
-
     def __init__(self, config_manager: DjangoConfigurationManager, generator: AbstractTimeSeriesGenerator,
                  producer: DataProducer):
         self.config_manager = config_manager
@@ -20,21 +20,21 @@ class ParallelRunSimulator:
         """
         runs a simulator generating its datasets
         """
-        while (self.config_manager.current_dataset_num < len(self.config_manager.datasets)-1 and
+        while (self.config_manager.current_dataset_num < len(self.config_manager.datasets) - 1 and
                not self._stop_event.is_set()):
             self.config_manager.configure()
             self.config_manager.datasets[self.config_manager.current_dataset_num].status = \
                 self.config_manager.datasets[self.config_manager.current_dataset_num].RUNNING
             self.config_manager.datasets[self.config_manager.current_dataset_num].save()
-            return_flag = self.producer.produce_data(self.generator.generate_time_series(),
-                                                     self.config_manager, str(self.config_manager.current_dataset_num))
-
+            return_flag = self.producer.produce_data(self.generator.generate_time_series())
+            self.producer.add_metadata()
             if type(self.producer) == KafkaProducer:
                 self.consumer.subscribe(str(self.config_manager.current_dataset_num))
                 self.consumer.generate_csv()
 
             if return_flag:
-                self.config_manager.datasets[self.config_manager.current_dataset_num].status = self.config_manager.datasets[
+                self.config_manager.datasets[self.config_manager.current_dataset_num].status = \
+                self.config_manager.datasets[
                     self.config_manager.current_dataset_num].SUCCEEDED
                 self.config_manager.datasets[self.config_manager.current_dataset_num].save()
 
