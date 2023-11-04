@@ -39,6 +39,7 @@ class CSVDataProducer(DataProducer):
 
         return True
 
+    
     def generate_metadata_file(self):
         """
             Generates a .csv file containing the metadata of all the generated time series

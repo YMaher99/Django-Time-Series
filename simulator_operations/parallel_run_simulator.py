@@ -2,8 +2,8 @@ import threading
 from generators.abstract_time_series_generator import AbstractTimeSeriesGenerator
 from producers.data_producer import DataProducer
 from configurers.django_configuration_manager import DjangoConfigurationManager
+from producers.kafka_producer import KafkaProducer
 from producers.kafka_consumer import KafkaConsumer
-
 
 class ParallelRunSimulator:
 
@@ -28,8 +28,11 @@ class ParallelRunSimulator:
             self.config_manager.datasets[self.config_manager.current_dataset_num].save()
             return_flag = self.producer.produce_data(self.generator.generate_time_series(),
                                                      self.config_manager, str(self.config_manager.current_dataset_num))
-            self.consumer.subscribe(str(self.config_manager.current_dataset_num))
-            self.consumer.generate_csv()
+
+            if type(self.producer) == KafkaProducer:
+                self.consumer.subscribe(str(self.config_manager.current_dataset_num))
+                self.consumer.generate_csv()
+
             if return_flag:
                 self.config_manager.datasets[self.config_manager.current_dataset_num].status = self.config_manager.datasets[
                     self.config_manager.current_dataset_num].SUCCEEDED
