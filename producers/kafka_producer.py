@@ -1,8 +1,4 @@
-import json
-
 import pandas as pd
-
-from configurers.configuration_manager import ConfigurationManager
 from producers.data_producer import DataProducer
 from confluent_kafka import Producer
 from serializers.kafka_serializer import KafkaSerializer

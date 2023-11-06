@@ -17,7 +17,8 @@ class Simulator(models.Model):
 
     KAFKA = "kafka"
     CSV = "csv"
-    producer_type_choices = ((KAFKA, "Kafka"), (CSV, "CSV"))
+    NIFI = "nifi"
+    producer_type_choices = ((KAFKA, "Kafka"), (CSV, "CSV"), (NIFI, "NIFI"))
 
     simulator_runner = None
 
