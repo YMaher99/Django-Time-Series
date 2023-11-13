@@ -17,6 +17,7 @@ class NIFIProducer(DataProducer):
         host = "db"
         port = "5432"
 
+
         # Establish a connection to the database
         conn = psycopg2.connect(
             dbname=dbname,

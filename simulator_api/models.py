@@ -30,6 +30,7 @@ class Simulator(models.Model):
     producer_type = models.CharField(choices=producer_type_choices, max_length=200)
     process_id = models.IntegerField()
     sink_name = models.CharField(max_length=200, null=True)
+    scheduled_interval_days = models.IntegerField(null=True)
 
 
 class Dataset(models.Model):
