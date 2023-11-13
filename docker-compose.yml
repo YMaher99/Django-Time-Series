@@ -17,7 +17,7 @@ services:
     depends_on:
       - db
     networks:
-      - nifi-network
+      - ext-network
   db:
     image: postgres
     environment:
@@ -27,7 +27,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - nifi-network
+      - ext-network
 
   zookeeper:
     image: confluentinc/cp-zookeeper:6.1.0
@@ -39,7 +39,7 @@ services:
         ZOOKEEPER_TICK_TIME: 2000
         ZOOKEEPER_SYNC_LIMIT: 2
     networks:
-        - nifi-network
+        - ext-network
 
   kafka:
     image: confluentinc/cp-kafka:6.1.0
@@ -56,13 +56,13 @@ services:
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
       KAFKA_DELETE_TOPIC_ENABLE: "true"
     networks:
-      - nifi-network
+      - ext-network
 
 volumes:
   postgres_data:
 
 networks:
-  nifi-network:
+  ext-network:
     external: true
 
 

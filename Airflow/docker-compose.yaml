@@ -86,7 +86,7 @@ x-airflow-common:
     postgres:
       condition: service_healthy
   networks:
-    - nifi-network
+    - ext-network
 
 services:
   postgres:
@@ -104,7 +104,7 @@ services:
       start_period: 5s
     restart: always
     networks:
-      - nifi-network
+      - ext-network
 
   redis:
     image: redis:latest
@@ -118,7 +118,7 @@ services:
       start_period: 30s
     restart: always
     networks:
-      - nifi-network
+      - ext-network
 
   airflow-webserver:
     <<: *airflow-common
@@ -137,7 +137,7 @@ services:
       airflow-init:
         condition: service_completed_successfully
     networks:
-      - nifi-network
+      - ext-network
 
 
   airflow-scheduler:
@@ -155,7 +155,7 @@ services:
       airflow-init:
         condition: service_completed_successfully
     networks:
-      - nifi-network
+      - ext-network
 
   airflow-worker:
     <<: *airflow-common
@@ -180,7 +180,7 @@ services:
       airflow-init:
         condition: service_completed_successfully
     networks:
-      - nifi-network
+      - ext-network
 
   airflow-triggerer:
     <<: *airflow-common
@@ -197,7 +197,7 @@ services:
       airflow-init:
         condition: service_completed_successfully
     networks:
-      - nifi-network
+      - ext-network
 
   airflow-init:
     <<: *airflow-common
@@ -277,7 +277,7 @@ services:
     volumes:
       - ${AIRFLOW_PROJ_DIR:-.}:/sources
     networks:
-      - nifi-network
+      - ext-network
 
   airflow-cli:
     <<: *airflow-common
@@ -292,7 +292,7 @@ services:
       - -c
       - airflow
     networks:
-      - nifi-network
+      - ext-network
 
   # You can enable flower by adding "--profile flower" option e.g. docker-compose --profile flower up
   # or by explicitly targeted on the command line e.g. docker-compose up flower.
@@ -316,11 +316,11 @@ services:
       airflow-init:
         condition: service_completed_successfully
     networks:
-      - nifi-network
+      - ext-network
 
 volumes:
   postgres-db-volume:
 
 networks:
-  nifi-network:
+  ext-network:
     external: true
