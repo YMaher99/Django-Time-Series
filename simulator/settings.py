@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'simulator_api',
     'drf_yasg',
+    'graphene_django'   
 ]
 
 MIDDLEWARE = [
