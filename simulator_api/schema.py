@@ -3,25 +3,6 @@ from graphene_django import DjangoObjectType
 from .models import Simulator, Dataset, Seasonality
 
 
-# class SimulatorTypeEnum(graphene.Enum):
-#     ADDITIVE = "additive"
-#     MULTIPLICATIVE = "multiplicative"
-#
-#
-# class SimulatorTypeType(graphene.ObjectType):
-#     restricted_field = graphene.Field(SimulatorTypeEnum)
-#
-#
-# class ProducerEnum(graphene.Enum):
-#     KAFKA = 'kafka'
-#     CSV = 'csv'
-#     NIFI = 'nifi'
-#
-#
-# class ProducerType(graphene.ObjectType):
-#     restricted_field = graphene.Field(ProducerEnum)
-
-
 class SimulatorType(DjangoObjectType):
     class Meta:
         model = Simulator
@@ -94,7 +75,6 @@ class CreateSimulator(graphene.Mutation):
     simulator = graphene.Field(SimulatorType)
 
     def mutate(self, info, **kwargs):
-
         simulator_obj = Simulator.objects.create(start_date=kwargs['start_date'],
                                                  process_id=0,
                                                  end_date=kwargs['end_date'],
@@ -107,6 +87,7 @@ class CreateSimulator(graphene.Mutation):
 
         # Return the created simulator object
         return CreateSimulator(simulator_obj)
+
 
 class CreateDataset(graphene.Mutation):
     class Arguments:
@@ -135,6 +116,7 @@ class CreateDataset(graphene.Mutation):
                                              status=kwargs['status'],
                                              simulator_id=kwargs['simulator_id'])
         return CreateDataset(dataset_obj)
+
 
 class Mutation(graphene.ObjectType):
     create_seasonality = CreateSeasonality.Field()
